@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block body %}
+  <form action="{{ url_for('add_domain') }}" method=post class=add-domain>
+    <dl>
+      <dt>Domainname:
+      <dd><input type=text size=30 name=domainname>
+      <dd><input type=submit value=Add>
+    </dl>
+  </form>
+  <ul class=entries>
+  {% for domain in domains %}
+    <li><h2>{{ domain.name }}</h2>
+    <ul>
+      {% for user in domain.users %}
+        <li>{{ user.email }}
+      {% else %}
+        <li><em>No mail users entries here so far</em>
+      {% endfor %}
+      <li><form action="{{ url_for('add_user', domain_id=domain.id) }}" method=post class=add-user>
+            <dl>
+              <dt>Username:
+              <dd><input type=text size=30 name=username>
+              <dt>Password:
+              <dd><input type=password size=30 name=password>
+              <dd><input type=submit value=Add>
+            </dl>
+          </form>
+    </ul>
+    <ul>
+      {% for alias in domain.aliases %}
+        <li>{{ alias.source }} : {{ alias.destination }}
+      {% else %}
+        <li><em>No mail alias entries here so far</em>
+      {% endfor %}
+      <li><form action="{{ url_for('add_alias', domain_id=domain.id) }}" method=post class=add-alias>
+            <dl>
+              <dt>Source:
+              <dd><input type=text size=30 name=source>
+              <dt>Destination:
+	          <dd><input type=text size=30 name=destination>
+              <dd><input type=submit value=Add>
+            </dl>
+          </form>
+    </ul>
+  {% else %}
+    <li><em>Unbelievable.  No mail domains entries here so far</em>
+  {% endfor %}
+  </ul>
+{% endblock %}
