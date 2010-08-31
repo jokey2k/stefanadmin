@@ -40,7 +40,7 @@ class VirtualUser(db.Model):
     def __init__(self, domain, email, password=u''):
         self.domain = domain
         self.email = email
-        self.set_password(password)
+        self.password = password
 
     def _set_password(self, password):
         self._password = md5(password).hexdigest()
@@ -82,16 +82,44 @@ def show_tree():
 
 @app.route('/domain/new', methods=['POST'])
 def add_domain():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    domain = VirtualDomain(request.form['domainname'])
+    db.session.add(domain)
+    db.session.commit()
     flash('Domain added')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/user/new', methods=['POST'])
-def add_user():
+def add_user(domain_id):
+    print "Hello"
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    domain = VirtualDomain.query.get(domain_id)
+    if domain is None:
+        flash('Invalid domain id')
+        return redirect(url_for('show_tree'))
+
+    newuser = VirtualUser(domain, request.form['username'], request.form['password'])
+    db.session.add(newuser)
+    db.session.commit()
     flash('User added')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/alias/new', methods=['POST'])
-def add_alias():
+def add_alias(domain_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    domain = VirtualDomain.query.get(domain_id)
+    if domain is None:
+        flash('Invalid domain id')
+        return redirect(url_for('show_tree'))
+
+    newalias = VirtualAlias(domain, request.form['source'], request.form['destination'])
+    db.session.add(newalias)
+    db.session.commit()
     flash('Alias added')
     return redirect(url_for('show_tree'))
 
