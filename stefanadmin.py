@@ -6,6 +6,7 @@ from hashlib import md5
 
 # configuration
 SECRET_KEY = 'development key'
+DEBUG = True
 
 # Admin data
 USERNAME='mySecretUser'
@@ -69,6 +70,7 @@ class VirtualAlias(db.Model):
         self.destination = destination
 
 
+# View functions
 @app.route('/')
 def show_tree():
     """Render a simple tree showing all elements"""
@@ -107,7 +109,6 @@ def login():
             return redirect(url_for('show_tree'))
     return render_template('login.html', error=error)
 
-
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
@@ -116,4 +117,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=app.config['DEBUG'])
