@@ -7,6 +7,7 @@ from hashlib import md5
 # configuration
 SECRET_KEY = 'development key'
 DEBUG = True
+HOST = '127.0.0.1'
 
 # Admin data
 USERNAME='mySecretUser'
@@ -32,7 +33,7 @@ class VirtualDomain(db.Model):
 class VirtualUser(db.Model):
     __tablename__ = 'virtual_users'
     id = db.Column(db.Integer, primary_key=True)
-    _password = db.Column(db.String(32), nullable=False)
+    password = db.Column(db.String(32), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     domain_id = db.Column(db.Integer, db.ForeignKey('virtual_domains.id'))
     domain = db.relationship(VirtualDomain, uselist=False, backref=db.backref('users'))
@@ -43,10 +44,11 @@ class VirtualUser(db.Model):
         self.password = password
 
     def _set_password(self, password):
-        self._password = md5(password).hexdigest()
+        self.password = md5(password).hexdigest()
 
     def _get_password(self):
-        return self._password
+        return self.password
+    
     password = property(_get_password, _set_password)
 
     def check_password(self, password):
@@ -145,4 +147,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=app.config['DEBUG'])
+    app.run(debug=app.config['DEBUG'],host=app.config['HOST'])

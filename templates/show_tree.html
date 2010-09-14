@@ -3,8 +3,7 @@
   <form action="{{ url_for('add_domain') }}" method=post class=add-domain>
     <dl>
       <dt>Domainname:
-      <dd><input type=text size=30 name=domainname>
-      <dd><input type=submit value=Add>
+      <dd><input type=text size=30 name=domainname><input type=submit value=Add>
     </dl>
   </form>
   <ul class=entries>
@@ -18,28 +17,22 @@
       {% endfor %}
       <li><form action="{{ url_for('add_user', domain_id=domain.id) }}" method=post class=add-user>
             <dl>
-              <dt>Username:
-              <dd><input type=text size=30 name=username>
-              <dt>Password:
-              <dd><input type=password size=30 name=password>
-              <dd><input type=submit value=Add>
+              <dt><input type=text size=30 name=username value="@{{ domain.name }}"> Password: <input type=password size=30 name=password><input type=submit value=Add>
             </dl>
+            <br>
           </form>
     </ul>
     <ul>
       {% for alias in domain.aliases %}
-        <li>{{ alias.source }} : {{ alias.destination }}
+        <li>{{ alias.source }} -> {{ alias.destination }}
       {% else %}
         <li><em>No mail alias entries here so far</em>
       {% endfor %}
       <li><form action="{{ url_for('add_alias', domain_id=domain.id) }}" method=post class=add-alias>
             <dl>
-              <dt>Source:
-              <dd><input type=text size=30 name=source>
-              <dt>Destination:
-	          <dd><input type=text size=30 name=destination>
-              <dd><input type=submit value=Add>
+              <dt><input type=text size=30 name=source> -&gt; <input type=text size=30 name=destination value="@{{ domain.name }}"><input type=submit value=Add>
             </dl>
+            <br>
           </form>
     </ul>
   {% else %}
