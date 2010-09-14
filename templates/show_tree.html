@@ -8,7 +8,7 @@
   </form>
   <ul class=entries>
   {% for domain in domains %}
-    <li><h2>{{ domain.name }}</h2>
+    <li><h2>{{ domain.name }} <a href="{{ url_for('del_domain', domain_id=domain.id) }}">DEL</a></h2>
     <ul>
       {% for user in domain.users %}
         <li>{{ user.email }}
@@ -30,7 +30,7 @@
       {% endfor %}
       <li><form action="{{ url_for('add_alias', domain_id=domain.id) }}" method=post class=add-alias>
             <dl>
-              <dt><input type=text size=30 name=source> -&gt; <input type=text size=30 name=destination value="@{{ domain.name }}"><input type=submit value=Add>
+              <dt><input type=text size=30 name=source value="@{{ domain.name }}"> -&gt; <input type=text size=30 name=destination value="@{{ domain.name }}"><input type=submit value=Add>
             </dl>
             <br>
           </form>

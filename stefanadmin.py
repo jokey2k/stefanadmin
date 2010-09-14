@@ -17,7 +17,8 @@ PASSWORD='mySecretPassword'
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.from_envvar('STEFANADMIN_SETTINGS', silent=True)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/example.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/example.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://mail:mailpw@localhost/mail'
 db = SQLAlchemy(app)
 
 # DB Models
@@ -90,6 +91,16 @@ def add_domain():
     db.session.add(domain)
     db.session.commit()
     flash('Domain added')
+    return redirect(url_for('show_tree'))
+
+@app.route('/domain/<int:domain_id>/del', methods=['GET'])
+def del_domain(domain_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    domain = VirtualDomain.query.filter_by(id=domain_id).first() 
+    db.session.delete(domain)
+    db.session.commit()
+    flash('Domain deleted')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/user/new', methods=['POST'])
