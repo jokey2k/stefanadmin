@@ -34,7 +34,7 @@ class VirtualDomain(db.Model):
 class VirtualUser(db.Model):
     __tablename__ = 'virtual_users'
     id = db.Column(db.Integer, primary_key=True)
-    password = db.Column(db.String(32), nullable=False)
+    _password = db.Column('password', db.String(32), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     domain_id = db.Column(db.Integer, db.ForeignKey('virtual_domains.id'))
     domain = db.relationship(VirtualDomain, uselist=False, backref=db.backref('users'))
@@ -44,13 +44,15 @@ class VirtualUser(db.Model):
         self.email = email
         self.password = password
 
+    @property
+    def password(self):
+        return self.password
+
+    @password.setter
     def _set_password(self, password):
         self.password = md5(password).hexdigest()
 
-    def _get_password(self):
-        return self.password
-    
-    password = property(_get_password, _set_password)
+    password = db.synonym('_password', descriptor=password)
 
     def check_password(self, password):
         return self.password == md5(password).hexdigest()
