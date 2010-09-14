@@ -1,3 +1,7 @@
 *.pyc
 *.pyo
+.project
+.pydevproject
+.git/
+.settings/
 env/
