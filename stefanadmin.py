@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
@@ -121,6 +122,16 @@ def add_user(domain_id):
     flash('User added')
     return redirect(url_for('show_tree'))
 
+@app.route('/domain/<int:domain_id>/user/<int:user_id>/del', methods=['GET'])
+def del_user(user_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    user = VirtualUser.query.filter_by(id=user_id).first() 
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted')
+    return redirect(url_for('show_tree'))
+
 @app.route('/domain/<int:domain_id>/alias/new', methods=['POST'])
 def add_alias(domain_id):
     if not session.get('logged_in'):
@@ -135,6 +146,16 @@ def add_alias(domain_id):
     db.session.add(newalias)
     db.session.commit()
     flash('Alias added')
+    return redirect(url_for('show_tree'))
+
+@app.route('/domain/<int:domain_id>/alias/<int:alias_id>/del', methods=['GET'])
+def del_alias(alias_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    alias = VirtualAlias.query.filter_by(id=alias_id).first() 
+    db.session.delete(alias)
+    db.session.commit()
+    flash('Alias deleted')
     return redirect(url_for('show_tree'))
 
 @app.route('/login', methods=['GET', 'POST'])
