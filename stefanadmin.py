@@ -92,7 +92,7 @@ def add_domain():
     domain = VirtualDomain(request.form['domainname'])
     db.session.add(domain)
     db.session.commit()
-    flash('Domain added')
+    flash('Domain "'+domain.name+'" added')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/del', methods=['GET'])
@@ -102,7 +102,7 @@ def del_domain(domain_id):
     domain = VirtualDomain.query.filter_by(id=domain_id).first() 
     db.session.delete(domain)
     db.session.commit()
-    flash('Domain deleted')
+    flash('Domain "'+domain.name+'" deleted')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/user/new', methods=['POST'])
@@ -119,17 +119,17 @@ def add_user(domain_id):
     newuser = VirtualUser(domain, request.form['username'], request.form['password'])
     db.session.add(newuser)
     db.session.commit()
-    flash('User added')
+    flash('User "'+newuser.email+'" added')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/user/<int:user_id>/del', methods=['GET'])
-def del_user(user_id):
+def del_user(domain_id, user_id):
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     user = VirtualUser.query.filter_by(id=user_id).first() 
     db.session.delete(user)
     db.session.commit()
-    flash('User deleted')
+    flash('User "'+user.email+'" deleted')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/alias/new', methods=['POST'])
@@ -145,17 +145,17 @@ def add_alias(domain_id):
     newalias = VirtualAlias(domain, request.form['source'], request.form['destination'])
     db.session.add(newalias)
     db.session.commit()
-    flash('Alias added')
+    flash('Alias "'+newalias.source+' -> '+newalias.destination+'" added')
     return redirect(url_for('show_tree'))
 
 @app.route('/domain/<int:domain_id>/alias/<int:alias_id>/del', methods=['GET'])
-def del_alias(alias_id):
+def del_alias(domain_id, alias_id):
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     alias = VirtualAlias.query.filter_by(id=alias_id).first() 
     db.session.delete(alias)
     db.session.commit()
-    flash('Alias deleted')
+    flash('Alias "'+alias.source+' -> '+alias.destination+'" deleted')
     return redirect(url_for('show_tree'))
 
 @app.route('/login', methods=['GET', 'POST'])
