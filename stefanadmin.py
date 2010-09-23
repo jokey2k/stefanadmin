@@ -37,7 +37,7 @@ class VirtualUser(db.Model):
     password = db.Column(db.String(32), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     domain_id = db.Column(db.Integer, db.ForeignKey('virtual_domains.id'))
-    domain = db.relationship(VirtualDomain, uselist=False, backref=db.backref('users'))
+    domain = db.relationship(VirtualDomain, uselist=False, backref=db.backref('users',cascade="all, delete, delete-orphan"))
 
     def __init__(self, domain, email, password=u''):
         self.domain = domain
@@ -63,7 +63,7 @@ class VirtualAlias(db.Model):
     __tablename__ = 'virtual_aliases'
     id = db.Column(db.Integer, primary_key=True)
     domain_id = db.Column(db.Integer, db.ForeignKey('virtual_domains.id'))
-    domain = db.relationship(VirtualDomain, uselist=False, backref=db.backref('aliases'))
+    domain = db.relationship(VirtualDomain, uselist=False, backref=db.backref('aliases',cascade="all, delete, delete-orphan"))
     source = db.Column(db.String(100), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
 
@@ -71,7 +71,6 @@ class VirtualAlias(db.Model):
         self.domain = domain
         self.source = source
         self.destination = destination
-
 
 # View functions
 @app.route('/')
